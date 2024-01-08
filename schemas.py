@@ -2,7 +2,6 @@ from marshmallow import Schema, fields
 from flask_smorest.fields import Upload
 
 
-
 class AddFileSchema(Schema):
     name = fields.Str(required=True, dump_only=True)
     username = fields.Str()
@@ -11,6 +10,7 @@ class AddFileSchema(Schema):
     ext = fields.Str(dump_only=True)
     name_uuid = fields.Str(dump_only=True)
     username_uuid = fields.Str(dump_only=True)
+
 
 class RoleSchema(Schema):
     role = fields.Str(dump_only=True)
@@ -37,14 +37,18 @@ class SuperAdminUserSchema(Schema):
     role = fields.Nested(RoleSchema, dump_only=True)
     password = fields.Str()
 
+
 class SuperAdminRoleSchema(Schema):
     role = fields.Str()
+
 
 class SuperAdminUsernameSchema(Schema):
     username = fields.Str()
 
+
 class SuperAdminPasswordSchema(Schema):
     password = fields.Str()
+
 
 class SuperAdminSuperAdminSchema(Schema):
     username = fields.Str()

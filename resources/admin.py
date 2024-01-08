@@ -10,29 +10,35 @@ from sqlalchemy import and_
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import db
 
-blp = Blueprint('admin', __name__, description='Show, add, delete users. Change roles')
+blp = Blueprint("admin", __name__, description="Show, add, delete users. Change roles")
 
-from schemas import RegisterSchema, SuperAdminUserSchema, SuperAdminRoleSchema, SuperAdminPasswordSchema\
-    , SuperAdminUsernameSchema
+from schemas import (
+    RegisterSchema,
+    SuperAdminUserSchema,
+    SuperAdminRoleSchema,
+    SuperAdminPasswordSchema,
+    SuperAdminUsernameSchema,
+)
 from models import UserModel
 
 
-@blp.route('/users/users')
+@blp.route("/users/users")
 class UsersList(MethodView):
     @jwt_required()
     @blp.response(200, RegisterSchema(many=True))
     def get(self):
         admin_uuid = get_jwt_identity()
         if check_admin(admin_uuid):
-            users =[]
+            users = []
             for user in UserModel.query.all():
-                if user.role.role == 'user':
+                if user.role.role == "user":
                     users.append(user)
             return users
         else:
-            abort(409, 'You can not access here!')
+            abort(409, "You can not access here!")
 
-@blp.route('/users/user/<string:username_uuid>')
+
+@blp.route("/users/user/<string:username_uuid>")
 class Admin(MethodView):
     @jwt_required()
     @blp.response(200, SuperAdminUserSchema)
@@ -42,10 +48,10 @@ class Admin(MethodView):
             user = UserModel.query.filter_by(username_uuid=username_uuid).first()
             return user
         else:
-            abort(409, message='You can not access here!')
-        
+            abort(409, message="You can not access here!")
 
-@blp.route('/users/user/<string:username_uuid>/chnageRole')
+
+@blp.route("/users/user/<string:username_uuid>/chnageRole")
 class AdminRole(MethodView):
     @jwt_required()
     @blp.arguments(SuperAdminRoleSchema)
@@ -54,17 +60,18 @@ class AdminRole(MethodView):
         admin_uuid = get_jwt_identity()
         if check_admin(admin_uuid):
             user = UserModel.query.filter_by(username_uuid=username_uuid).first()
-            user.role.role = role_data['role']
+            user.role.role = role_data["role"]
             try:
                 db.session.add(user)
                 db.session.commit()
             except:
-                abort(500, message='Some error has been ...')
+                abort(500, message="Some error has been ...")
             return user
         else:
-            abort(409, message='You can not access here!')
+            abort(409, message="You can not access here!")
 
-@blp.route('/users/user/<string:username_uuid>/changeUsername')
+
+@blp.route("/users/user/<string:username_uuid>/changeUsername")
 class AdminUsername(MethodView):
     @jwt_required()
     @blp.arguments(SuperAdminUsernameSchema)
@@ -73,17 +80,18 @@ class AdminUsername(MethodView):
         admin_uuid = get_jwt_identity()
         if check_admin(admin_uuid):
             user = UserModel.query.filter_by(username_uuid=username_uuid).first()
-            user.username = username_data['username']
+            user.username = username_data["username"]
             try:
                 db.session.add(user)
                 db.session.commit()
             except:
-                abort(500, message='Some error has been ...')
+                abort(500, message="Some error has been ...")
             return user
         else:
-            abort(409, message='You can not access here!')
+            abort(409, message="You can not access here!")
 
-@blp.route('/users/user/<string:username_uuid>/changePassword')
+
+@blp.route("/users/user/<string:username_uuid>/changePassword")
 class AdminUsername(MethodView):
     @jwt_required()
     @blp.arguments(SuperAdminPasswordSchema)
@@ -92,19 +100,20 @@ class AdminUsername(MethodView):
         admin_uuid = get_jwt_identity()
         if check_admin(admin_uuid):
             user = UserModel.query.filter_by(username_uuid=username_uuid).first()
-            user.password = pbkdf2_sha256.hash(password_data['password'])
+            user.password = pbkdf2_sha256.hash(password_data["password"])
             try:
                 db.session.add(user)
                 db.session.commit()
             except:
-                abort(500, message='Some error has been ...')
+                abort(500, message="Some error has been ...")
             return user
         else:
-            abort(409, message='You can not access here!')
+            abort(409, message="You can not access here!")
+
 
 def check_admin(uuid):
     user = UserModel.query.filter_by(username_uuid=uuid).first()
-    if user.role.role == 'admin':
+    if user.role.role == "admin":
         return True
     else:
         return False

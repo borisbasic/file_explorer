@@ -1,0 +1,8 @@
+flask-smorest
+flask-sqlalchemy
+flask-jwt-extended
+passlib
+flask-migrate
+pytest
+black
+gunicorn
