@@ -4,7 +4,6 @@ from flask_smorest.fields import Upload
 
 class AddFileSchema(Schema):
     name = fields.Str(required=True, dump_only=True)
-    username = fields.Str()
     file = Upload()
     time_created = fields.Str(dump_only=True)
     ext = fields.Str(dump_only=True)
@@ -35,7 +34,7 @@ class LoginSchema(Schema):
 class SuperAdminUserSchema(Schema):
     username = fields.Str()
     role = fields.Nested(RoleSchema, dump_only=True)
-    password = fields.Str()
+    password = fields.Str(load_only=True)
 
 
 class SuperAdminRoleSchema(Schema):
@@ -47,7 +46,7 @@ class SuperAdminUsernameSchema(Schema):
 
 
 class SuperAdminPasswordSchema(Schema):
-    password = fields.Str()
+    password = fields.Str(load_only=True)
 
 
 class SuperAdminSuperAdminSchema(Schema):

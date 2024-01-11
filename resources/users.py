@@ -54,7 +54,7 @@ class Register(MethodView):
             db.session.commit()
         except:
             abort(500, message="An error occured while loading data")
-        return {"Message": "You are register successfully!"}
+        return {"message": "You are register successfully!"}
 
 
 @blp.route("/login")
@@ -93,9 +93,9 @@ class Login(MethodView):
                 db.session.commit()
             except:
                 abort(500, message="Some error while loading data.")
-            access_token = create_access_token(identity=os.getenv("SUPER_ADMIN_UUID"))
+            access_token = create_access_token(identity=user.username_uuid)
             return {
-                "message": "You are logged ass super_admin",
+                "message": "You are logged as super_admin",
                 "access_token": access_token,
             }
 

@@ -51,7 +51,7 @@ class Admin(MethodView):
             abort(409, message="You can not access here!")
 
 
-@blp.route("/users/user/<string:username_uuid>/chnageRole")
+@blp.route("/users/user/<string:username_uuid>/changeRole")
 class AdminRole(MethodView):
     @jwt_required()
     @blp.arguments(SuperAdminRoleSchema)

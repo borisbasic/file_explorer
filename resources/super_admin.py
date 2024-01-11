@@ -62,10 +62,10 @@ class SuperAdmin(MethodView):
             user = UserModel.query.filter_by(username_uuid=username_uuid).first()
             db.session.delete(user)
             db.session.commit()
-            return {"message": "User is deleted!"}
+        return {"message": "User is deleted!"}
 
 
-@blp.route("/users/admin/<string:username_uuid>/chnageRole")
+@blp.route("/users/admin/<string:username_uuid>/changeRole")
 class SuperAdminRole(MethodView):
     @jwt_required()
     @blp.arguments(SuperAdminRoleSchema)
@@ -174,12 +174,18 @@ class SuperAdminSuperAdmin(MethodView):
             super_admin_ = UserModel.query.filter_by(
                 username_uuid=username_uuid
             ).first()
-            if super_admin_data["username"] is not None:
+            if super_admin_data["username"] != "":
                 super_admin_.username = super_admin_data["username"]
-            if super_admin_data["password"] is not None:
+            else:
+                abort(403, message="Fill this.")
+            if super_admin_data["password"] != "":
                 super_admin_.password = pbkdf2_sha256.hash(super_admin_data["password"])
-            if super_admin_data["role"] is not None:
+            else:
+                abort(403, message="Fill this.")
+            if super_admin_data["role"] != "":
                 super_admin_.role.role = super_admin_data["role"]
+            else:
+                abort(403, message="Fill this.")
             try:
                 db.session.add(super_admin_)
                 db.session.commit()
@@ -190,7 +196,7 @@ class SuperAdminSuperAdmin(MethodView):
             abort(409, message="You can not access here!")
 
     @jwt_required()
-    def delete(self, super_admin_data, username_uuid):
+    def delete(self, username_uuid):
         super_admin_uuid = get_jwt_identity()
         super_admin = UserModel.query.filter_by(username_uuid=super_admin_uuid).first()
         if check_super_admin(super_admin_uuid) and super_admin.username == os.getenv(
@@ -208,6 +214,8 @@ class SuperAdminSuperAdmin(MethodView):
                 abort(500, message="Some error has been occured while loading data!")
         else:
             abort(409, message="You can not access here!")
+
+        return {"message": "Super admin deleted."}
 
 
 def check_super_admin(uuid):

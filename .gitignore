@@ -1,5 +1,7 @@
 .flaskenv
 instance
-*.__pychace__
+*.__pycache__
 dont_need.txt
 .env
+venv
+static
