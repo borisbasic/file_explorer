@@ -6,3 +6,4 @@ flask-migrate
 pytest
 black
 gunicorn
+python-dotenv
